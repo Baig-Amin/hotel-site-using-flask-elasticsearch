@@ -1,0 +1,418 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Hotel Page</title>
+{% endblock %}
+
+{% block body %}
+
+<div id="indexbody" class="container-fluid">
+
+    <!-- Header Section start -->
+    <div class="bg-danger border mt-2 p-1 rounded-top ">
+        <div class="row">
+
+            <!-- Header name or Top search city name  -->
+            <div class="col-md-6">
+                <h4 class="text-light p-2"><strong>Top Hotel in Orlando, Florida, USA</strong></h4>
+            </div>
+
+            <!-- Blank div or column -->
+            <div class="col-md-5"></div>
+
+            <!-- DropDown currency converter -->
+            <div class="col-md-1">
+                <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDarkDropdownMenuLink" role="button"
+                    data-bs-toggle="dropdown" aria-expanded="false" style="text-decoration: none;">
+                    <b>৳ (BDT)</b>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+                    <li><a class="dropdown-item" href="#">$ (USD)</a></li>
+                    <li><a class="dropdown-item" href="#">€ (EURO)</a></li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+    <!-- Header Section end -->
+
+    <!-- Main Hotel Body start -->
+    <div class="border border-danger rounded mb-3">
+        <div class="row">
+            <!-- Main search hotel pic and discription  -->
+            <div class="col-md-9">
+                <div class="card mb-3 pt-2 ps-3 border-0" style="max-width: 1200px;">
+                    <div class="row g-0">
+                        <!-- Search Hotel Image  -->
+                        <div class="col-md-4">
+                            <img src="{{ hotelDataById.hImage }}" class="img-fluid rounded-start w-100">
+                        </div>
+                        <!-- Hotel description section  -->
+                        <div class="col-md-8">
+                            <div class="card-body" style="padding-top: 0px;">
+                                <!-- Hotel Category -->
+                                <p><b>{{hotelDataById.hType}}</b></p>
+                                <!-- Hotel name  -->
+                                <h4 class="card-title"><b>{{hotelDataById.hName}}</b></h4>
+                                <!-- Hotel review  -->
+                                <p><small>{{hotelDataById.hReview}} Reviews</small></p>
+                                <!-- Hotel condition -->
+                                <p>
+                                    <small>
+                                        <i class="fas fa-user-friends"></i>&nbsp;&nbsp;<span>{{hotelDataById.hGuests}}
+                                            Guests</span>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;
+                                        <i class="fas fa-bed">&nbsp;&nbsp;</i><span>{{hotelDataById.hBedRooms}}
+                                            Bedrooms</span>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;
+                                        <i class="fas fa-moon">&nbsp;&nbsp;</i><span>1 Night Min.Stay</span>
+                                    </small>
+                                </p>
+                                <!-- Hotel features -->
+                                <p>
+                                    <small>
+                                        {% for feature in hotelDataById.hFeatures %}
+                                        <span>{{feature}}&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                        {% endfor %}
+                                    </small>
+                                </p>
+                                <!-- Hotel Description -->
+                                <p id="descriptionText" class="card-text">
+                                    <small>
+                                        {{hotelDataById.hDescription | safe }}
+                                    </small>
+                                </p>
+                                <button type="button" id="readDetails" class="btn btn-danger"
+                                    onclick="myfunction()">Read More</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hotel price and guests selection area  -->
+            <div class="col-md-3 border border-secondary border-top-0 border-end-0 border-bottom-0 mt-3 mb-3">
+                <div class="row">
+                    <p class=" mb-2">From</p>
+                </div>
+                <!-- Hotel price  -->
+                <div class="row">
+                    <h4><b>৳ <span>{{ hotelDataById.hCost }}</span>/night</b></h4>
+                    <hr class="mt-3 ms-3 mx-auto" style="width: 350px;">
+                </div>
+                <div class="row">
+                    <p><small>Enter guests number for accurate pricing</small></p>
+                </div>
+                <!-- Guest Selection  -->
+                <div class="row border  ms-1" style="width: 350px;">
+                    <p class="p-2 mb-0">
+                        <i class="fas fa-user-friends">&nbsp;&nbsp;&nbsp;</i>Guests
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <i id="case-increase" class="fas fa-plus cursoR"></i>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <span id="case-count">1</span>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <i id="case-decrease" class="fas fa-minus cursoR"></i>
+                    </p>
+                </div>
+                <!-- Availablity check button  -->
+                <div class="row">
+                    <a href="https://www.booking.com/" target="_blank" style="text-decoration: none;">
+                        <button type="button" class="btn btn-success ms-2 mt-4" style="width: 350px;">
+                            <b>CHECK AVAILABILITY</b>
+                        </button>
+                    </a>
+                </div>
+                <!-- Booking site link  -->
+                <div class="row">
+                    <p class="mt-3 ps-0 text-center">
+                        <small>You will be redirected to
+                            <a href="https://www.booking.com/" target="_blank"
+                                style="text-decoration: none;">Booking.com</a>
+                        </small>
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- Main Hotel Body end -->
+
+    <!-- Search related area hotels availablity  -->
+    <div>
+        <h5 class="text-danger pt-3"><b>Orlando (FL) has 49 Vacation Rentals and Resorts</b></h5>
+    </div>
+
+
+    <div class="row">
+        <div class="card-group p-3 pb-0">
+
+            {% for hit in hits %}
+
+            <div class="card p-3">
+                <img src="{{ hit['_source'].hImage }}" class="card-img-top img-fluid cardImg" />
+                <div class="card-body">
+                    <h6 class="card-title">
+                        <small>
+                            <b>{{ hit['_source'].hName }}</b>
+                        </small>
+                    </h6>
+                    <p>
+                        <small>{{ hit['_source'].hReview }} Reviews</small>
+                    </p>
+                    <p>
+                        <small>
+                            <span>Air Conditioner</span>&nbsp;&nbsp;&nbsp;
+                            <span>Breakfast</span>&nbsp;&nbsp;&nbsp;
+                            <span>Internet</span>
+                        </small>
+                    </p>
+                    <button type="button" class="btn btn-success">View Details</button>
+                </div>
+            </div>
+
+            {% endfor %}
+
+
+        </div>
+    </div>
+    <!-- First Row End  -->
+
+    <!-- Second Row Start  -->
+    <div class="row">
+        <div class="card-group p-3 pb-0">
+
+            <div class="card p-3">
+                <img src="{{ allHotelImages.hotelImage6 }}" class="card-img-top img-fluid cardImg" />
+                <div class="card-body">
+                    <h6 class="card-title">
+                        <small>
+                            <b>Eco-Friendly House in Orlando, Florida</b>
+                        </small>
+                    </h6>
+                    <p>
+                        <small>1092 Reviews</small>
+                    </p>
+                    <p>
+                        <small>
+                            <span>Air Conditioner</span>&nbsp;&nbsp;&nbsp;
+                            <span>Breakfast</span>&nbsp;&nbsp;&nbsp;
+                            <span>Internet</span>
+                        </small>
+                    </p>
+                    <button type="button" class="btn btn-success">View Details</button>
+                </div>
+            </div>
+
+            <div class="card p-3">
+                <img src="{{ allHotelImages.hotelImage7 }}" class="card-img-top img-fluid cardImg" />
+                <div class="card-body">
+                    <h6 class="card-title">
+                        <small>
+                            <b>Orlando hotels up to 60% off</b>
+                        </small>
+                    </h6>
+                    <p>
+                        <small>652 Reviews</small>
+                    </p>
+                    <p>
+                        <small>
+                            <span>Air Conditioner</span>&nbsp;&nbsp;&nbsp;
+                            <span>Breakfast</span>&nbsp;&nbsp;&nbsp;
+                            <span>Internet</span>
+                        </small>
+                    </p>
+                    <button type="button" class="btn btn-success">View Details</button>
+                </div>
+            </div>
+
+            <div class="card p-3">
+                <img src="{{ allHotelImages.hotelImage8 }}" class="card-img-top img-fluid cardImg" />
+                <div class="card-body">
+                    <h6 class="card-title">
+                        <small>
+                            <b>Unique Style Home in Orlando, Florida</b>
+                        </small>
+                    </h6>
+                    <p>
+                        <small>890 Reviews</small>
+                    </p>
+                    <p>
+                        <small>
+                            <span>Air Conditioner</span>&nbsp;&nbsp;&nbsp;
+                            <span>Breakfast</span>&nbsp;&nbsp;&nbsp;
+                            <span>Internet</span>
+                        </small>
+                    </p>
+                    <button type="button" class="btn btn-success">View Details</button>
+                </div>
+            </div>
+
+            <div class="card p-3">
+                <img src="{{ allHotelImages.hotelImage9 }}" class="card-img-top img-fluid cardImg" />
+                <div class="card-body">
+                    <h6 class="card-title">
+                        <small>
+                            <b>Exceptional Home near Orlando, Florida</b>
+                        </small>
+                    </h6>
+                    <p>
+                        <small>764 Reviews</small>
+                    </p>
+                    <p>
+                        <small>
+                            <span>Air Conditioner</span>&nbsp;&nbsp;&nbsp;
+                            <span>Breakfast</span>&nbsp;&nbsp;&nbsp;
+                            <span>Internet</span>
+                        </small>
+                    </p>
+                    <button type="button" class="btn btn-success">View Details</button>
+                </div>
+            </div>
+
+            <div class="card p-3">
+                <img src="{{ allHotelImages.hotelImage10 }}" class="card-img-top img-fluid cardImg" />
+                <div class="card-body">
+                    <h6 class="card-title">
+                        <small>
+                            <b>Luxury Villa starting from $55 </b>
+                        </small>
+                    </h6>
+                    <p>
+                        <small>1092 Reviews</small>
+                    </p>
+                    <p>
+                        <small>
+                            <span>Air Conditioner</span>&nbsp;&nbsp;&nbsp;
+                            <span>Breakfast</span>&nbsp;&nbsp;&nbsp;
+                            <span>Internet</span>
+                        </small>
+                    </p>
+                    <button type="button" class="btn btn-success">View Details</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- Second Row End  -->
+
+    <!-- Third Row Start  -->
+    <div class="row">
+        <div class="card-group p-3">
+
+            <div class="card p-3">
+                <img src="{{ allHotelImages.hotelImage11 }}" class="card-img-top img-fluid cardImg" />
+                <div class="card-body">
+                    <h6 class="card-title">
+                        <small>
+                            <b>Florida’s Most Room to Explore</b>
+                        </small>
+                    </h6>
+                    <p>
+                        <small>754 Reviews</small>
+                    </p>
+                    <p>
+                        <small>
+                            <span>Air Conditioner</span>&nbsp;&nbsp;&nbsp;
+                            <span>Breakfast</span>&nbsp;&nbsp;&nbsp;
+                            <span>Internet</span>
+                        </small>
+                    </p>
+                    <button type="button" class="btn btn-success">View Details</button>
+                </div>
+            </div>
+
+            <div class="card p-3">
+                <img src="{{ allHotelImages.hotelImage12 }}" class="card-img-top img-fluid cardImg" />
+                <div class="card-body">
+                    <h6 class="card-title">
+                        <small>
+                            <b>Florida’s Universal's Hard Rock Hotel®</b>
+                        </small>
+                    </h6>
+                    <p>
+                        <small>658 Reviews</small>
+                    </p>
+                    <p>
+                        <small>
+                            <span>Air Conditioner</span>&nbsp;&nbsp;&nbsp;
+                            <span>Breakfast</span>&nbsp;&nbsp;&nbsp;
+                            <span>Internet</span>
+                        </small>
+                    </p>
+                    <button type="button" class="btn btn-success">View Details</button>
+                </div>
+            </div>
+
+            <div class="card p-3">
+                <img src="{{ allHotelImages.hotelImage13 }}" class="card-img-top img-fluid cardImg" />
+                <div class="card-body">
+                    <h6 class="card-title">
+                        <small>
+                            <b>Universal's Loews Sapphire Falls Resort</b>
+                        </small>
+                    </h6>
+                    <p>
+                        <small>963 Reviews</small>
+                    </p>
+                    <p>
+                        <small>
+                            <span>Air Conditioner</span>&nbsp;&nbsp;&nbsp;
+                            <span>Breakfast</span>&nbsp;&nbsp;&nbsp;
+                            <span>Internet</span>
+                        </small>
+                    </p>
+                    <button type="button" class="btn btn-success">View Details</button>
+                </div>
+            </div>
+
+            <div class="card p-3">
+                <img src="{{ allHotelImages.hotelImage14 }}" class="card-img-top img-fluid cardImg" />
+                <div class="card-body">
+                    <h6 class="card-title">
+                        <small>
+                            <b>Book a home with flexibility.</b>
+                        </small>
+                    </h6>
+                    <p>
+                        <small>894 Reviews</small>
+                    </p>
+                    <p>
+                        <small>
+                            <span>Air Conditioner</span>&nbsp;&nbsp;&nbsp;
+                            <span>Breakfast</span>&nbsp;&nbsp;&nbsp;
+                            <span>Internet</span>
+                        </small>
+                    </p>
+                    <button type="button" class="btn btn-success">View Details</button>
+                </div>
+            </div>
+
+            <div class="card p-3">
+                <img src="{{ allHotelImages.hotelImage15 }}" class="card-img-top img-fluid cardImg" />
+                <div class="card-body">
+                    <h6 class="card-title">
+                        <small>
+                            <b>Universal's Cabana Bay Beach Resort</b>
+                        </small>
+                    </h6>
+                    <p>
+                        <small>951 Reviews</small>
+                    </p>
+                    <p>
+                        <small>
+                            <span>Air Conditioner</span>&nbsp;&nbsp;&nbsp;
+                            <span>Breakfast</span>&nbsp;&nbsp;&nbsp;
+                            <span>Internet</span>
+                        </small>
+                    </p>
+                    <button type="button" class="btn btn-success">View Details</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- Third Row End  -->
+
+</div>
+{% endblock %}
